@@ -13,29 +13,35 @@ def load_data(path):
         line = line.split('::')
         data = trainData(line[0], line[1], line[2])
         train_data_list.append(data)
+    return train_data_list
 
-    print("load  is done")
 
 
-def train(round, p, q, train_data_list):
+def train(round, p, q, train_data_list, test_data_list):
     for i in range(round):
         for trainData in train_data_list:
             KnownRatingWithBias = trainData.ratio
-            PredictionRating = np.matmul(p[trainData.user], q[trainData.item])
+            PredictionRating = np.matmul(p[int(trainData.user), :], q[int(trainData.item), :])
             err = KnownRatingWithBias - PredictionRating
+            tempPu = np.matmul(p[int(trainData.user), :], 1-0.0001)
+            tempDeltaPu = np.matmul(p[int(trainData.user), :], err * 0.001)
+            np.add(tempPu, tempDeltaPu)
+
+
+        for testData in test_data_list:
 
 
 if __name__=="__main__":
-    load_data('../data/recsys/train.txt')
-
-    N = u_max
-    M = i_max
-
+    train_data_list = load_data('../data/recsys/train.txt')
+    N = 6000
+    M = 4000
+    round = 36
     f = 10
     eta = 0.001
     lamuda = 0.01
     p = np.random.rand(N, f)
-    q = np.random.rand(f, M)
+    q = np.random.rand(M, f)
+    train(round, p, q, train_data_list)
 
 
 # def find_rating(u,i):

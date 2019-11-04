@@ -4,10 +4,10 @@ from math import sqrt
 import matplotlib.pyplot as plt
 from  model.Mainfuction import trainData
 
-u_max = 0
-i_max = 0
+
 train_data_list = []
-def load_data(path):
+test_data_list = []
+def load_train_data(path):
     fn = open(path)
     for line in fn:
         line = line.split('::')
@@ -15,10 +15,21 @@ def load_data(path):
         train_data_list.append(data)
     return train_data_list
 
+def load_test_data(path):
+    fn = open(path)
+    for line in fn:
+        line = line.split('::')
+        data = trainData(line[0], line[1], line[2])
+        test_data_list.append(data)
+    return test_data_list
+
+
 
 
 def train(round, p, q, train_data_list, test_data_list):
+
     for i in range(round):
+        '''train'''
         for trainData in train_data_list:
             KnownRatingWithBias = trainData.ratio
             PredictionRating = np.matmul(p[int(trainData.user), :], q[int(trainData.item), :])
@@ -32,7 +43,8 @@ def train(round, p, q, train_data_list, test_data_list):
 
 
 if __name__=="__main__":
-    train_data_list = load_data('../data/recsys/train.txt')
+    train_data_list = load_train_data('../data/recsys/train.txt')
+    test_data_list = load_test_data('../data/recsys/test.txt')
     N = 6000
     M = 4000
     round = 36
@@ -41,7 +53,7 @@ if __name__=="__main__":
     lamuda = 0.01
     p = np.random.rand(N, f)
     q = np.random.rand(M, f)
-    train(round, p, q, train_data_list)
+    train(round, p, q, train_data_list,test_data_list)
 
 
 # def find_rating(u,i):

@@ -9,3 +9,9 @@ class trainData(object):
         self.user = user
         self.item = item
         self.ratio = ratio
+
+class testData(object):
+    def __init__(self, user, item, ratio):
+        self.user = user
+        self.item = item
+        self.ratio = ratio

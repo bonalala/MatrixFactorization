@@ -48,12 +48,13 @@ if __name__=="__main__":
     N = 6000
     M = 4000
     round = 36
-    f = 10
+    f = 10  
     eta = 0.001
     lamuda = 0.01
     p = np.random.rand(N, f)
     q = np.random.rand(M, f)
     train(round, p, q, train_data_list,test_data_list)
+    print()
 
 
 # def find_rating(u,i):

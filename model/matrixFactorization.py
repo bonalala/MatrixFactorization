@@ -29,25 +29,26 @@ def load_data2(path):
 
 def train(round, p, q, train_data_list, test_data_list):
 
-    RMSE , sumRMSE, sumCount = 0
+    sumRMSE = 0
+    sumCount = 0
 
     for i in range(round):
         for trainData in train_data_list:
-            KnownRating = trainData.ratio
+            KnownRating = float(trainData.ratio)
             PredictionRating = np.matmul(p[int(trainData.user), :], q[int(trainData.item), :])
             err = KnownRating - PredictionRating
 
-            tempPu = np.matmul(p[int(trainData.user), :], (1-eta*lamuda))
-            tempDeltaQi = np.matmul(q[int(trainData.item), :], err * eta)
+            tempPu = p[int(trainData.user), :] * (1-eta*lamuda)
+            tempDeltaQi = q[int(trainData.item), :] * err * eta
             p[int(trainData.user), :] = np.add(tempPu, tempDeltaQi)
 
-            tempQi = np.matmul(q[int(trainData).item, :], (1-eta*lamuda))
-            tempDeltaPu = np.matmul(p[int(trainData.user), :], err*eta)
+            tempQi = q[int(trainData.item), :] * (1-eta*lamuda)
+            tempDeltaPu = p[int(trainData.user), :] * err*eta
             q[int(trainData.item), :] = np.add(tempQi, tempDeltaPu)
 
 
         for testData in test_data_list:
-            actualRating = testData.ratio
+            actualRating = float(testData.ratio)
             ratinghat = np.matmul(p[int(testData.user), :],q[int(testData.item), :])
             sumRMSE = sumRMSE + pow(actualRating - ratinghat, 2)
             sumCount = sumCount + 1
@@ -55,6 +56,7 @@ def train(round, p, q, train_data_list, test_data_list):
         RMSE = sqrt(sumRMSE / sumCount)
         print('round: ', i+1, 'RMSE: ', RMSE)
 
+    return p , q
 
 
 if __name__=="__main__":
@@ -62,13 +64,13 @@ if __name__=="__main__":
     test_data_list = load_data2('../data/recsys/test.txt')
     N = 7000
     M = 4000
-    round = 36
+    round = 1000
     f = 10
     eta = 0.001
     lamuda = 0.01
     p = np.random.rand(N, f)
     q = np.random.rand(M, f)
-    train(round, p, q, train_data_list,test_data_list)
+    p , q = train(round, p, q, train_data_list,test_data_list)
 
 
 # def find_rating(u,i):

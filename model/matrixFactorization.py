@@ -67,7 +67,7 @@ if __name__=="__main__":
     round = 1000
     f = 10
     eta = 0.001
-    lamuda = 0.01
+    lamuda = 0.05
     p = np.random.rand(N, f)
     q = np.random.rand(M, f)
     p , q = train(round, p, q, train_data_list,test_data_list)

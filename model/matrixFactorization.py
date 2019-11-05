@@ -3,59 +3,72 @@ from math import pow
 from math import sqrt
 import matplotlib.pyplot as plt
 from  model.Mainfuction import trainData
-
+from  model.Mainfuction import testData
 
 train_data_list = []
 test_data_list = []
-def load_train_data(path):
+
+def load_data1(path):
     fn = open(path)
     for line in fn:
         line = line.split('::')
         data = trainData(line[0], line[1], line[2])
         train_data_list.append(data)
+    print('trainset have been loaded')
     return train_data_list
 
-def load_test_data(path):
+def load_data2(path):
     fn = open(path)
     for line in fn:
         line = line.split('::')
-        data = trainData(line[0], line[1], line[2])
+        data = testData(line[0], line[1], line[2])
         test_data_list.append(data)
+    print('testset have been loaded')
     return test_data_list
-
-
 
 
 def train(round, p, q, train_data_list, test_data_list):
 
+    RMSE , sumRMSE, sumCount = 0
+
     for i in range(round):
-        '''train'''
         for trainData in train_data_list:
-            KnownRatingWithBias = trainData.ratio
+            KnownRating = trainData.ratio
             PredictionRating = np.matmul(p[int(trainData.user), :], q[int(trainData.item), :])
-            err = KnownRatingWithBias - PredictionRating
-            tempPu = np.matmul(p[int(trainData.user), :], 1-0.0001)
-            tempDeltaPu = np.matmul(p[int(trainData.user), :], err * 0.001)
-            np.add(tempPu, tempDeltaPu)
+            err = KnownRating - PredictionRating
+
+            tempPu = np.matmul(p[int(trainData.user), :], (1-eta*lamuda))
+            tempDeltaQi = np.matmul(q[int(trainData.item), :], err * eta)
+            p[int(trainData.user), :] = np.add(tempPu, tempDeltaQi)
+
+            tempQi = np.matmul(q[int(trainData).item, :], (1-eta*lamuda))
+            tempDeltaPu = np.matmul(p[int(trainData.user), :], err*eta)
+            q[int(trainData.item), :] = np.add(tempQi, tempDeltaPu)
 
 
-        # for testData in test_data_list:
+        for testData in test_data_list:
+            actualRating = testData.ratio
+            ratinghat = np.matmul(p[int(testData.user), :],q[int(testData.item), :])
+            sumRMSE = sumRMSE + pow(actualRating - ratinghat, 2)
+            sumCount = sumCount + 1
+
+        RMSE = sqrt(sumRMSE / sumCount)
+        print('round: ', i+1, 'RMSE: ', RMSE)
+
 
 
 if __name__=="__main__":
-    train_data_list = load_train_data('../data/recsys/train.txt')
-    test_data_list = load_test_data('../data/recsys/test.txt')
-    N = 6000
+    train_data_list = load_data1('../data/recsys/train.txt')
+    test_data_list = load_data2('../data/recsys/test.txt')
+    N = 7000
     M = 4000
     round = 36
-    f = 10  
+    f = 10
     eta = 0.001
     lamuda = 0.01
     p = np.random.rand(N, f)
     q = np.random.rand(M, f)
     train(round, p, q, train_data_list,test_data_list)
-    print()
-    print("dsafsdfsd")
 
 
 # def find_rating(u,i):

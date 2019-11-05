@@ -39,7 +39,7 @@ def train(round, p, q, train_data_list, test_data_list):
             np.add(tempPu, tempDeltaPu)
 
 
-        for testData in test_data_list:
+        # for testData in test_data_list:
 
 
 if __name__=="__main__":

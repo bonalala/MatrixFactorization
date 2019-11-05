@@ -55,6 +55,7 @@ if __name__=="__main__":
     q = np.random.rand(M, f)
     train(round, p, q, train_data_list,test_data_list)
     print()
+    print("dsafsdfsd")
 
 
 # def find_rating(u,i):
